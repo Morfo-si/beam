@@ -9,6 +9,7 @@ import (
 	"github.com/morfo-si/beam/internal/config"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 )
 
@@ -35,12 +36,18 @@ func NewACEServer() Server {
 	})
 
 	// Middleware for logging
-	app.Use(logger.New(logger.Config{
-		Format:        "${time} [${ip}]:${port} ${status} - ${method} ${path}\n",
-		TimeZone:      "UTC",
-		Output:        os.Stdout,
-		DisableColors: false,
-	}))
+	app.Use(
+		logger.New(logger.Config{
+			Format:        "${time} [${ip}]:${port} ${status} - ${method} ${path}\n",
+			TimeZone:      "UTC",
+			Output:        os.Stdout,
+			DisableColors: false,
+		}),
+		cors.New(cors.Config{
+			AllowOrigins: []string{"http://localhost:3000"},
+			AllowMethods: []string{"POST"},
+		}),
+	)
 
 	server := &ACEServer{
 		app: app,
