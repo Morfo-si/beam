@@ -53,6 +53,20 @@ func ParseChatResponse(resp *http.Response, chatResponse *config.OllamaResponse)
 	return json.Unmarshal(body, chatResponse)
 }
 
+func SendOLSRequest(app *fiber.App, content []byte) (*http.Response, error) {
+	req := httptest.NewRequest("POST", "/api/v1/ols", bytes.NewReader(content))
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Length", strconv.FormatInt(req.ContentLength, 10))
+	return app.Test(req, -1)
+}
+
+func ParseOLSResponse(resp *http.Response, olsResponse *config.OLSResponse) error {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(body, olsResponse)
+}
 func TestACEServer(t *testing.T) {
 	srv := NewACEServer()
 	app := srv.App()
@@ -85,4 +99,18 @@ func TestACEServerWithoutQuestion(t *testing.T) {
 	resp, _ := SendChatRequest(app, content)
 
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestACEServerWithOLS(t *testing.T) {
+	srv := NewACEServer()
+	app := srv.App()
+
+	content, _ := BuildChatRequest("", "What is Ansible?")
+	resp, _ := SendOLSRequest(app, content)
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	var olsResponse config.OLSResponse
+	ParseOLSResponse(resp, &olsResponse)
+	assert.True(t, len(olsResponse.Response) > 0)
 }

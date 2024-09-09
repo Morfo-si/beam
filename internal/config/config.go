@@ -11,6 +11,7 @@ type Config struct {
 	ModelName string
 	ModelAPI  string
 	Host      string
+	OLSAPI    string
 	Port      string
 	SSLMode   string
 }
@@ -34,6 +35,7 @@ func LoadConfig() *Config {
 		Port:      getEnv("PORT", "8081"),
 		ModelName: getEnv("LLM_NAME", DEFAULT_LLM),
 		ModelAPI:  getEnv("LLM_API", DEFAULT_LLM_URL),
+		OLSAPI:    getEnv("OLS_API", DEFAULT_OLS_URL),
 		SSLMode:   getEnv("SSLMODE", "disable"),
 	}
 

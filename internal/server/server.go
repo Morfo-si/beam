@@ -18,6 +18,7 @@ type Server interface {
 	Start() error
 	Query(c fiber.Ctx) error
 	App() *fiber.App
+	QueryOLS(c fiber.Ctx) error
 }
 
 type ACEServer struct {
@@ -55,6 +56,7 @@ func NewACEServer() Server {
 	}
 
 	server.app.Post("/api/v1/chat", server.Query)
+	server.app.Post("/api/v1/ols", server.QueryOLS)
 	return server
 }
 
