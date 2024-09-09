@@ -31,26 +31,58 @@ func TestFiberApp(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
+func BuildChatRequest(prompt string, question string) ([]byte, error) {
+	var chatRequest config.ChatRequest
+	chatRequest.Prompt = prompt
+	chatRequest.Question = question
+	return json.Marshal(&chatRequest)
+}
+
+func SendChatRequest(app *fiber.App, content []byte) (*http.Response, error) {
+	req := httptest.NewRequest("POST", "/api/v1/chat", bytes.NewReader(content))
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Length", strconv.FormatInt(req.ContentLength, 10))
+	return app.Test(req, -1)
+}
+
+func ParseChatResponse(resp *http.Response, chatResponse *config.OllamaResponse) error {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(body, chatResponse)
+}
+
 func TestACEServer(t *testing.T) {
 	srv := NewACEServer()
 	app := srv.App()
 
-	var chatRequest config.ChatRequest
-	chatRequest.Prompt = "a prompt"
-	chatRequest.Question = "a question"
-	content, _ := json.Marshal(&chatRequest)
-
-	req := httptest.NewRequest("POST", "/api/v1/chat", bytes.NewReader(content))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Content-Length", strconv.FormatInt(req.ContentLength, 10))
-	resp, _ := app.Test(req, -1)
+	content, _ := BuildChatRequest("a prompt", "a question")
+	resp, _ := SendChatRequest(app, content)
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
-	body, err := io.ReadAll(resp.Body)
-	assert.Nil(t, err)
-
 	var chatResponse config.OllamaResponse
-	json.Unmarshal(body, &chatResponse)
+	ParseChatResponse(resp, &chatResponse)
 	assert.True(t, len(chatResponse.Response) > 0)
+}
+
+func TestACEServerWithoutPrompt(t *testing.T) {
+	srv := NewACEServer()
+	app := srv.App()
+
+	content, _ := BuildChatRequest("", "a question")
+	resp, _ := SendChatRequest(app, content)
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestACEServerWithoutQuestion(t *testing.T) {
+	srv := NewACEServer()
+	app := srv.App()
+
+	content, _ := BuildChatRequest("a prompt", "")
+	resp, _ := SendChatRequest(app, content)
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
