@@ -14,4 +14,7 @@ const (
 	DEFAULT_LLM string = "llama3:latest"
 	// Default LLM URL
 	DEFAULT_LLM_URL = "http://localhost:11434/api/generate"
+
+	// Default OLS URL
+	DEFAULT_OLS_URL = "http://localhost:8080/v1/query"
 )
