@@ -17,6 +17,7 @@ import (
 type Server interface {
 	Start() error
 	Query(c fiber.Ctx) error
+	App() *fiber.App
 }
 
 type ACEServer struct {
@@ -64,4 +65,8 @@ func (s *ACEServer) Start() error {
 		return err
 	}
 	return nil
+}
+
+func (s *ACEServer) App() *fiber.App {
+	return s.app
 }
