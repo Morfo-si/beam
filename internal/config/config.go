@@ -31,7 +31,7 @@ func LoadConfig() *Config {
 
 	configInstance = &Config{
 		Host:      getEnv("HOST", "localhost"),
-		Port:      getEnv("PORT", "8080"),
+		Port:      getEnv("PORT", "8081"),
 		ModelName: getEnv("LLM_NAME", DEFAULT_LLM),
 		ModelAPI:  getEnv("LLM_API", DEFAULT_LLM_URL),
 		SSLMode:   getEnv("SSLMODE", "disable"),

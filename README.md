@@ -35,7 +35,7 @@ To run BEAM, you'll need:
 
    ```bash
    HOST=localhost
-   PORT=8080
+   PORT=8081
    LLM_NAME=llama3:latest
    LLM_API=http://localhost:11434/api/generate
    SSLMODE=disable
