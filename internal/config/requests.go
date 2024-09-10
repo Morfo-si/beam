@@ -8,9 +8,9 @@ type ChatRequest struct {
 
 // Struct to define the input for OLS /v1/query API
 type OLSRequest struct {
-	Model          string `json:model`
-	Provider       string `json:provider`
+	Model          string `json:"model"`
+	Provider       string `json:"provider"`
 	Query          string `json:"query"`
-	ConversationId string `json:conversation_id`
+	ConversationId string `json:"conversation_id"`
 	// TODO Attachments
 }

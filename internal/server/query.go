@@ -13,9 +13,19 @@ import (
 // Function to query the LLM API
 func queryLLM(fullPrompt string) (string, error) {
 	// Define the request body for the LLM API
-	requestBody := config.OllamaRequest{
-		Model:  config.LoadConfig().ModelName,
-		Prompt: fullPrompt,
+	var requestBody interface{}
+
+	if config.LoadConfig().Engine == config.EngineOLS {
+		requestBody = config.OLSRequest{
+			Model:    config.LoadConfig().ModelName,
+			Query:    fullPrompt,
+			Provider: "ollama",
+		}
+	} else {
+		requestBody = config.OllamaRequest{
+			Model:  config.LoadConfig().ModelName,
+			Prompt: fullPrompt,
+		}
 	}
 
 	// Marshal the request body to JSON

@@ -1,19 +1,36 @@
 package config
 
 import (
+	"errors"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 )
 
+// Define a custom type for the engine
+type EngineType string
+
+// Define constants for the allowed engine values
+const (
+	EngineBeam EngineType = "beam"
+	EngineOLS  EngineType = "ols"
+)
+
+// Config struct with the new engine field
 type Config struct {
 	ModelName string
 	ModelAPI  string
 	Host      string
-	OLSAPI    string
 	Port      string
-	SSLMode   string
+	Engine    EngineType
+}
+
+// Function to validate the engine field
+func (c *Config) Validate() error {
+	if c.Engine != EngineBeam && c.Engine != EngineOLS {
+		return errors.New("invalid engine type: must be 'beam' or 'ols'")
+	}
+	return nil
 }
 
 var configInstance *Config
@@ -35,17 +52,7 @@ func LoadConfig() *Config {
 		Port:      getEnv("PORT", "8081"),
 		ModelName: getEnv("LLM_NAME", DEFAULT_LLM),
 		ModelAPI:  getEnv("LLM_API", DEFAULT_LLM_URL),
-		OLSAPI:    getEnv("OLS_API", DEFAULT_OLS_URL),
-		SSLMode:   getEnv("SSLMODE", "disable"),
+		Engine:    getEngineEnv("ENGINE", EngineBeam),
 	}
-
 	return configInstance
-}
-
-// getEnv is a helper function to get an environment variable with a fallback default value
-func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
 }

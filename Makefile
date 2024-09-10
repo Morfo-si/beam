@@ -22,7 +22,7 @@ build:
 run:
 	@echo "Running the application with environment variables from $(ENV_FILE)..."
 	@if [ -f $(ENV_FILE) ]; then \
-		export $$(cat $(ENV_FILE) | xargs); \
+		export $$(grep -v '^#' $(ENV_FILE) | xargs); \
 	fi; \
 	$(GORUN) $(SRC)
 

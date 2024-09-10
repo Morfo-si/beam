@@ -10,6 +10,7 @@ To run BEAM, you'll need:
 
 - [Go](https://golang.org/doc/install) installed on your machine.
 - [Git](https://git-scm.com/) to clone the repository.
+- [Ollama](https://ollama.com) OR [OpenShiftLightSpeed](https://github.com/openshift/lightspeed-service) running locally.
 - A `.env` file for configuration.
 
 ### Setup Instructions
@@ -36,9 +37,9 @@ To run BEAM, you'll need:
    ```bash
    HOST=localhost
    PORT=8081
+   ENGINE=beam
    LLM_NAME=llama3:latest
    LLM_API=http://localhost:11434/api/generate
-   SSLMODE=disable
    ```
 
 ### Using the Makefile
